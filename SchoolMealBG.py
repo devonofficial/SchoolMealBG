@@ -105,8 +105,9 @@ else:
         bg_image = Image.alpha_composite(bg_image, overlay)
         bg_image.save(FilePath+"/img/BG.png")
 
-    # 폰트색상 정의
+    # 기타사항 정의
     color = 'white'
+    bg_image = Image.open(FilePath+"/img/BG.png")
 
 # 텍스트 추가 및 바탕화면 설정
 drawmeal = ImageDraw.Draw(bg_image)
