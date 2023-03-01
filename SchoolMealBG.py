@@ -67,6 +67,10 @@ day = OutputDate[6:]
 if day.startswith("0"):
     day = day[1:]
 
+# 폰트 정의
+BigFontPath = FilePath+'/font/GmarketSansBold.otf'
+SmallFontPath = FilePath+'/font/SCDream5.otf'
+
 # 만우절용 코드 - 4월 1일 당일 점심, 저녁 메뉴에 장난질
 if month == '4' and day == '1' and MealCode != 2 and os.path.exists(FilePath+'/img/METADATA'):
     OutputText = re.sub("[ \t\r\f\v]","",OutputText) # \n을 제외한 공백 삭제
@@ -78,46 +82,35 @@ if month == '4' and day == '1' and MealCode != 2 and os.path.exists(FilePath+'/i
         WhileNum += 2
     
     # 요소 합성
-    target_image = Image.open(os.getenv('APPDATA')+'\Microsoft\Windows\Themes\TranscodedWallpaper').resize((1920,1080))
-    target_image = target_image.convert('RGBA')
+    bg_image = Image.open(os.getenv('APPDATA')+'\Microsoft\Windows\Themes\TranscodedWallpaper').resize((1920,1080))
+    bg_image = bg_image.convert('RGBA')
     bonobono = Image.open(FilePath+'/img/METADATA')
-    target_image = Image.alpha_composite(target_image, bonobono)
+    bg_image = Image.alpha_composite(bg_image, bonobono)
 
-    # 폰트 정의
-    try:
-        BigGulim = ImageFont.truetype('C:\Windows\Fonts\Gulim.ttc', size = 80)
-        SmallGulim = ImageFont.truetype('C:\Windows\Fonts\Gulim.ttc', size = 50)
-    except:
-        BigGulim = ImageFont.truetype(FilePath+'/font/GmarketSansBold.otf', size = 80)
-        SmallGulim = ImageFont.truetype(FilePath+'/font/SCDream5.otf', size = 50)
-
-    # 텍스트 추가 및 바탕화면 설정
-    drawmeal = ImageDraw.Draw(target_image)
-    drawmeal.text((1214,176),f"만우절 {['점심', '저녁', '아침'][MealCode]}",fill="black",font=BigGulim,align='left')
-    drawmeal.multiline_text((1220,304), OutputText, fill="black", font=SmallGulim, spacing=20, align="left")
-    target_image.save(FilePath+"/img/TodayMeal.png")
-    ctypes.windll.user32.SystemParametersInfoW(20, 0, FilePath+"/img/TodayMeal.png", 3)
+    # 폰트 재정의
+    if os.path.exists('C:\Windows\Fonts\Gulim.ttc'):
+        BigFontPath = 'C:\Windows\Fonts\Gulim.ttc'
+        SmallFontPath = 'C:\Windows\Fonts\Gulim.ttc'
+    color = 'black'
 
 # 기본 틀 제작하기
 else:
     if os.path.exists(FilePath+'/img/BG.png') == False: # 기존에 만들어놓은 합성용 틀이 없을 시
-        target_image = Image.open(os.getenv('APPDATA')+'\Microsoft\Windows\Themes\TranscodedWallpaper').resize((1920,1080))
-        target_image.save(FilePath+"/img/CleanBG.png")
+        bg_image = Image.open(os.getenv('APPDATA')+'\Microsoft\Windows\Themes\TranscodedWallpaper').resize((1920,1080))
+        bg_image.save(FilePath+"/img/CleanBG.png")
 
         # 요소 합성 및 저장
-        target_image = target_image.convert('RGBA')
+        bg_image = bg_image.convert('RGBA')
         overlay = Image.open(FilePath+'/img/overlay.png')
-        target_image = Image.alpha_composite(target_image, overlay)
-        target_image.save(FilePath+"/img/BG.png")
+        bg_image = Image.alpha_composite(bg_image, overlay)
+        bg_image.save(FilePath+"/img/BG.png")
 
-    # 폰트 정의
-    Gsans = ImageFont.truetype(FilePath+'/font/GmarketSansBold.otf', size = 80)
-    Edream = ImageFont.truetype(FilePath+'/font/SCDream5.otf', size = 50)
+    # 폰트색상 정의
+    color = 'white'
 
-    # 텍스트 추가 및 바탕화면 설정
-    bg_image = Image.open(FilePath+'/img/BG.png')
-    drawmeal = ImageDraw.Draw(bg_image)
-    drawmeal.text((1214,176),f"{month}월 {day}일 {['점심', '저녁', '아침'][MealCode]}",fill="white",font=Gsans,align='left')
-    drawmeal.multiline_text((1220,304), OutputText, fill="white", font=Edream, spacing=20, align="left")
-    bg_image.save(FilePath+"/img/TodayMeal.png")
-    ctypes.windll.user32.SystemParametersInfoW(20, 0, FilePath+"/img/TodayMeal.png", 3)
+# 텍스트 추가 및 바탕화면 설정
+drawmeal = ImageDraw.Draw(bg_image)
+drawmeal.text((1214,176),f"{month}월 {day}일 {['점심', '저녁', '아침'][MealCode]}",fill=color,font=ImageFont.truetype(BigFontPath, size = 80),align='left')
+drawmeal.multiline_text((1220,304), OutputText, fill=color, font=ImageFont.truetype(SmallFontPath, size = 50), spacing=20, align="left")
+bg_image.save(FilePath+"/img/TodayMeal.png")
+ctypes.windll.user32.SystemParametersInfoW(20, 0, FilePath+"/img/TodayMeal.png", 3)
