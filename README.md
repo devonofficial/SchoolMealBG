@@ -1,6 +1,6 @@
 SchoolMealBG
 =============
-<img src="./img/example.png" width="640" height="360" />
+<img src="./img/Example.png" width="640" height="360" />
 
 [NEIS Open API](https://open.neis.go.kr/portal/data/service/selectServicePage.do?infId=OPEN17320190722180924242823&infSeq=1)로 급식 정보를 불러와 바탕화면으로 만들어주는 프로그램입니다!
 
